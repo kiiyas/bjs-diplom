@@ -10,62 +10,54 @@ logoutBtn.action = function () {
 
 //Получение информации о пользователе
 ApiConnector.current(callback => {
-    if (callback.success) ProfileWidget.showProfile(this.data)
-})
+    if (callback.success) {ProfileWidget.showProfile(callback.data)}
+});
 
-/*
-Получение текущих курсов валюты
 
-Создайте объект типа RatesBoard.
-Напишите функцию, которая будет выполнять запрос получения курсов валют.
-В случае успешного запроса, очищайте таблицу с данными (clearTable) и заполняйте её (fillTable) полученными данными.
-Вызовите данную функцию для получения текущих валют.
-Напишите интервал, который будет многократно выполняться (раз в минуту) и вызывать вашу функцию с получением валют.
-*/
+//Получение текущих курсов валюты
+const ratesBoard = new RatesBoard();
+function getValuteCurses() {
+  ApiConnector.getStocks(callback => {
+    if (callback.success) {
+      ratesBoard.clearTable();
+      ratesBoard.fillTable(callback.data);
+    }
+  });
+}
+getValuteCurses();
+setInterval(getValuteCurses, 60000);
 
-/*
-Операции с деньгами
 
-Создайте объект типа MoneyManager
-Реализуйте пополнение баланса:
-Запишите в свойство addMoneyCallback функцию, которая будет выполнять запрос.
-Внутри функции выполните запрос на пополнение баланса (addMoney).
-Используйте аргумент функции свойства addMoneyCallback для передачи данных data в запрос.
-После выполнения запроса выполните проверку успешности запроса.
-В случае успешного запроса отобразите в профиле новые данные о пользователе из данных ответа от сервера (showProfile).
-Также выведите сообщение об успехе или ошибку (причину неудачного действия) пополнении баланса в окне отображения сообщения (setMessage).
-Реализуйте конвертирование валюты:
-Запишите в свойство conversionMoneyCallback функцию, которая будет выполнять запрос.
-Внутри функции выполните запрос на пополнение баланса (convertMoney)
-Используйте аргумент функции свойства conversionMoneyCallback для передачи данных в запрос.
-Повторите пункты 2.4-2.7
-Реализуйте перевод валюты:
-Запишите в свойство sendMoneyCallback функцию, которая будет выполнять запрос.
-Внутри функции выполните запрос на пополнение баланса (transferMoney).
-Используйте аргумент функции свойства sendMoneyCallback для передачи данных в запрос.
-Повторите пункты 2.4-2.7
-*/
 
-/*
-Работа с избранным
+//             ОПЕРАЦИИ С ДЕНЬГАМИ           
 
-Создайте объект типа FavoritesWidget
-Запросите начальный список избранного:
-Выполните запрос на получение списка избранного (getFavorites).
-В колбеке запроса проверяйте успешность запроса.
-При успешном запросе очистите текущий список избранного (clearTable).
-Отрисуйте полученные данные (fillTable).
-Заполните выпадающий список для перевода денег (updateUsersList).
-Реализуйте добавления пользователя в список избранных:
-Запишите в свойство addUserCallback функцию, которая будет выполнять запрос.
-Внутри функции выполните запрос на добавление пользователя (addUserToFavorites).
-Используйте аргумент функции свойства addUserCallback для передачи данных пользователя в запрос.
-После выполнения запроса выполните проверку успешности запроса.
-В случае успеха запроса выполните пункты 2.3-2.5
-Также выведите сообщение об успехе или ошибку (причину неудачного действия) добавлении пользователя в окне отображения сообщения (setMessage).
-Реализуйте удаление пользователя из избранного
-Запишите в свойство removeUserCallback функцию, которая будет выполнять запрос.
-Внутри функции выполните запрос на удаление пользователя (removeUserFromFavorites).
-Используйте аргумент функции свойства removeUserCallback для передачи данных пользователя в запрос.
-После запроса выполните пункты 3.4-3.6
-*/
+//Пополнение баланса
+const moneyManager = new MoneyManager();
+moneyManager.addMoneyCallback = function (this.data) {
+    ApiConnector.addMoney(this.data, callback) {
+        if (callback.success) {
+            ProfileWidget.showProfile(callback.data);
+            moneyManager.setMessage(isSuccess, 'Баланс пополнен!')
+        }
+    }
+}
+
+//Конвертирование валюты
+moneyManager.conversionMoneyCallback = function (this.data) {
+    ApiConnector.convertMoney(this.data, callback) {
+        if (callback.success) {
+            ProfileWidget.showProfile(callback.data);
+            moneyManager.setMessage(isSuccess, 'Конвертация выполнена!')
+        }
+    }        
+}
+
+//Перевод валюты
+moneyManager.sendMoneyCallback = function (this.data) {
+    ApiConnector.transferMoney(this.data, callback) {
+        if (callback.success) {
+            ProfileWidget.showProfile(callback.data);
+            moneyManager.setMessage(isSuccess, 'Перевод выполнен!')
+        }
+    }        
+}
